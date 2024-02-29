@@ -48,9 +48,4 @@ public class GLWindow
         shader = new ShaderProgram(VERTEXPATH, FRAGMENTPATH);
         shader.CompileShader();
     }
-
-    private void makeBuffers()
-    {
-          
-    }
 }
