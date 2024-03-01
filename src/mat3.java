@@ -1,11 +1,19 @@
 public class mat3
 {
-    vec4 r1, r2, r3;
-    public mat3(vec4 row1, vec4 row2, vec4 row3)
+    vec3 r1, r2, r3;
+    public mat3(vec3 row1, vec3 row2, vec3 row3)
     {
             r1 = row1;
             r2 = row2;
             r3 = row3;
+    }
+
+    // Constructer for direct 2d array to matrix
+    public mat3(float[][] matrix)
+    {
+        r1 = new vec3(matrix[0]);
+        r2 = new vec3(matrix[1]);
+        r3 = new vec3(matrix[2]);
     }
 
     public float[] getArr()

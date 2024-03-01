@@ -7,6 +7,13 @@ public class mat2
             r2 = row2;
     }
 
+    // Constructer for direct 2d array to matrix
+    public mat2(float[][] matrix)
+    {
+        r1 = new vec2(matrix[0]);
+        r2 = new vec2(matrix[1]);
+    }
+
     public float[] getArr()
     {
         float[] arr = ArrayOps.concat(r1.getArr(), r2.getArr());

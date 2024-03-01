@@ -11,7 +11,7 @@ public class VAO
         int offset = 0;
         for (int i = 0; i < details.length; ++i)
         {
-            glVertexAttribPointer(i, details[i], GL_FLOAT, false, totalSize * (Float.SIZE / 8), offset);
+            glVertexAttribPointer(i, details[i], GL_FLOAT, false, totalSize * (Float.SIZE / 8), offset * (Float.SIZE / 8));
             glEnableVertexAttribArray(i);
             offset += details[i];
         }

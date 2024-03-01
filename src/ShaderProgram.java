@@ -22,8 +22,9 @@ public class ShaderProgram
     public void CompileShader()
     {
         // Vertex Shader
-
+        System.out.println("Compiling Vertex Shader ...");
         int vertexShader = CompileShader(GL_VERTEX_SHADER, vertPath);
+        System.out.println("Compiling Fragment Shader ...");
         int fragmentShader = CompileShader(GL_FRAGMENT_SHADER, fragPath);
 
         // Shader Linking
@@ -42,7 +43,7 @@ public class ShaderProgram
         try
         {
             // Read shader file into string
-            Scanner reader = new Scanner(vertPath);
+            Scanner reader = new Scanner(ShaderPath);
             String shaderCode = "";
 
             while (reader.hasNextLine())
@@ -215,6 +216,25 @@ public class ShaderProgram
                 FloatBuffer numIn = stack.mallocFloat(16);
                 numIn.put(mat.getArr());
                 glUniform1fv(loc, numIn);
+            }
+        }
+    }
+
+    public void SetMat3Uniform(String name, mat3 mat)
+    {
+        int loc = glGetUniformLocation(ID, name);
+        if (loc < 0)
+        {
+            System.out.println("Uniform not found!");
+            return;
+        }
+        else
+        {
+            try (MemoryStack stack = stackPush())
+            {
+                FloatBuffer numIn = stack.mallocFloat(9);
+                numIn.put(mat.getArr());
+                glUniformMatrix3fv(loc, false, mat.getArr());
             }
         }
     }

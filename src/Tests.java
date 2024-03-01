@@ -1,7 +1,12 @@
+import java.io.File;
+
 public class Tests
 {
     public static void main(String[] args)
     {
+        File testf = new File("resources\\vertex.vert");
+        System.out.println(testf.getAbsolutePath());
+
         float[] coordsArr = {1.0f, 2.0f, 3.0f};
         vec3 coords = new vec3(coordsArr[0], coordsArr[1], coordsArr[2]);
         float[] results = {coords.x, coords.y, coords.z};

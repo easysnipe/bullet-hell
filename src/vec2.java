@@ -7,6 +7,14 @@ public class vec2 extends vec1
         y = Y;
     }
 
+    // Constructer for direct array into vector
+    public vec2(float[] vector)
+    {
+        super(vector[0]);
+
+        y = vector[1];
+    }
+
     public float[] getArr()
     {
         float[] arr = {this.x, this.y};

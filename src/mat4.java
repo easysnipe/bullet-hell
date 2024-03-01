@@ -9,6 +9,15 @@ public class mat4
             r4 = row4;
     }
 
+    // Constructer for direct 2d array to matrix
+    public mat4(float[][] matrix)
+    {
+        r1 = new vec4(matrix[0]);
+        r2 = new vec4(matrix[1]);
+        r3 = new vec4(matrix[2]);
+        r4 = new vec4(matrix[3]);
+    }
+
     public float[] getArr()
     {
         float[] arr = ArrayOps.concat(r1.getArr(), r2.getArr());
