@@ -18,7 +18,7 @@ public class GLWindow
     VAO vao2d; 
     VBO vbo2d;
 
-    mat3 view;
+    mat3 projection;
 
     final File VERTEXPATH = new File("resources\\vertex.vert");
     final File FRAGMENTPATH  = new File("resources\\fragment.frag");
@@ -48,19 +48,20 @@ public class GLWindow
         GL.createCapabilities();
         CompShaders();
 
-        float top = Height / 2.0f;
-        float bottom = -1 * Height / 2.0f;
-        float right = Width / 2.0f;
-        float left = -1 * Width / 2.0f;
+        float top = Height;
+        float bottom = 0.0f;
+        float right = Width;
+        float left = 0.0f;
 
-        view = createOrthoView(top, bottom, right, left);
+        projection = createOrthoProj(top, bottom, right, left);
         setConstUniforms(shader);
     }
 
     private void setConstUniforms(ShaderProgram shade)
     {
         shade.EnableProgram();
-        shade.SetMat3Uniform("view", view);
+        System.out.println(projection.getArr2d()[0][0]);
+        shade.SetMat3Uniform("projection", projection);
     }
 
     private void CompShaders()
@@ -69,10 +70,10 @@ public class GLWindow
         shader.CompileShader();
     }
 
-    public mat3 createOrthoView(float top, float bottom, float right, float left)
+    public mat3 createOrthoProj(float top, float bottom, float right, float left)
     {
-        vec3 r1 = new vec3(2.0f / (right - left), 0.0f, -1.0f *(right + left) / (right - left));
-        vec3 r2 = new vec3(0.0f, 2.0f / (top - bottom), -1.0f *(top + bottom) / (top - bottom));
+        vec3 r1 = new vec3(2.0f / (right - left), 0.0f, 0.0f);
+        vec3 r2 = new vec3(0.0f, 2.0f / (top - bottom), 0.0f);
         vec3 r3 = new vec3(0.0f, 0.0f, 1.0f);
         mat3 viewMatrix = new mat3(r1, r2, r3);
         return viewMatrix;
@@ -95,6 +96,7 @@ public class GLWindow
 
         for (int i = 0; i < objects.length; ++i)
         {
+            objects[i].projection = projection;
             objects[i].Draw(shader);
         }
 

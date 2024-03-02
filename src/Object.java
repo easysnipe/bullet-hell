@@ -5,13 +5,18 @@ public class Object
 {
     float[] data;
     float[] verts;
+    float[] points;
+    vec4 col;
     float rotation;
     mat3 model;
+    mat3 projection;
     vec2 pos;
     vec2 scale;
     vec2 velocity;
     VBO oVbo;
     VAO oVao;
+    VAO pVao;
+    VAO psVao;
 
     public Object(float[] vertices, vec4 color)
     {
@@ -24,6 +29,8 @@ public class Object
         oVao.UnBind();
         oVbo.UnBind();
 
+        pVao = createCenterPoint();
+        col = color;
         pos = new vec2(0.0f, 0.0f);
         scale = new vec2(0.25f, 0.25f);
         velocity = new vec2(0.0f, 0.0f);
@@ -48,6 +55,43 @@ public class Object
            output[++dP + 1] = color.a;
         }
         return (output);
+    }
+
+    private void addPoint()
+    {
+        float[] point3 = new float[3];
+
+        for (int i = 0; i < 2; ++i)
+        {
+            point3[i] = data[i];
+        }
+        point3[2] = 0.0f;
+
+        float[][] point2d = new float[3][1];
+        point2d[0][0] = point3[0];
+        point2d[1][0] = point3[1];
+        point2d[2][0] = point3[2];
+
+        float[][] modelProj = MatrixMath.Mult(model.getArr2d(), projection.getArr2d());
+        point2d = MatrixMath.Mult(modelProj, point2d);
+        float[] point2 = {point2d[0][0], point2d[0][1]};
+
+        float[] point6 = ArrayOps.concat(point2, col.getArr());
+        points = ArrayOps.concat(points, point6);
+        VBO psVbo = new VBO(points);
+        int[] vaoInst = {2, 4};
+        psVao = new VAO(vaoInst, 6);
+    }
+
+    private VAO createCenterPoint()
+    {
+        float[] arr = {0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f};
+        int[] vaoInst = {2, 4};
+        VBO vbo = new VBO(arr);
+        VAO vao = new VAO(vaoInst, 4);
+        vbo.UnBind();
+        vao.UnBind();
+        return vao;
     }
 
     private void makeVBO()
@@ -81,8 +125,8 @@ public class Object
         r3 = new vec3(0.0f, 0.0f, 1.0f);
         mat3 scaleMat = new mat3(r1, r2, r3);
         
-        model = new mat3(MatrixMath.Mult(translationMat.getArr2d(), rotationMat.getArr2d()));
-        model = new mat3(MatrixMath.Mult(model.getArr2d(), scaleMat.getArr2d()));
+        model = new mat3(MatrixMath.Mult(scaleMat.getArr2d(), rotationMat.getArr2d()));
+        model = new mat3(MatrixMath.Mult(model.getArr2d(), translationMat.getArr2d()));
         //model = translationMat;
     }
     
@@ -94,10 +138,20 @@ public class Object
     public void Draw(ShaderProgram shader)
     {
         makeModelMatrix();
+        addPoint();
         shader.SetMat3Uniform("model", model);
         shader.EnableProgram();
         oVao.Bind();
 
         glDrawArrays(GL_TRIANGLES, 0, data.length / 2);
+        oVao.UnBind();
+
+        pVao.Bind();
+        glDrawArrays(GL_POINTS, 0, 1);
+        pVao.UnBind();
+
+        psVao.Bind();
+        glDrawArrays(GL_POINTS, 0, points.length / 3);
+        psVao.UnBind();
     }
 }

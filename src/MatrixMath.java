@@ -8,7 +8,7 @@ public class MatrixMath
 
         for (int i = 0; i < mat1.length; ++i)
         {
-            for (int o = 0; o < mat2[0].length; ++o)
+            for (int o = 0; o < mat1[0].length; ++o)
             {
                 float sum = 0;
                 for (int p = 0; p < mat2.length; ++p)
