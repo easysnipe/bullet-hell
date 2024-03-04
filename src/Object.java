@@ -1,11 +1,12 @@
 import static org.lwjgl.opengl.GL43.*;
 import java.lang.Math;
+import java.util.ArrayList;
 
 public class Object
 {
     float[] data;
     float[] verts;
-    float[] points;
+    boolean debug;
     vec4 col;
     float rotation;
     mat3 model;
@@ -17,6 +18,8 @@ public class Object
     VAO oVao;
     VAO pVao;
     VAO psVao;
+    VBO psVbo;
+    ArrayList<Float> points;
 
     public Object(float[] vertices, vec4 color)
     {
@@ -24,6 +27,7 @@ public class Object
         assert vertices.length % 3 == 0 : "Vertices must be in groups of the 3 points forming a triangle!";
 
         data = makeData(vertices, color);
+        verts = vertices;
         makeVBO();
         makeVAO();
         oVao.UnBind();
@@ -34,6 +38,9 @@ public class Object
         pos = new vec2(0.0f, 0.0f);
         scale = new vec2(0.25f, 0.25f);
         velocity = new vec2(0.0f, 0.0f);
+        points = new ArrayList<Float>();
+        psVbo = new VBO(points);
+        debug = false;
         rotation = 0.0f;
     }
 
@@ -59,28 +66,38 @@ public class Object
 
     private void addPoint()
     {
-        float[] point3 = new float[3];
-
-        for (int i = 0; i < 2; ++i)
+        //points.add(1.0f);
+        for (int i = 0; i < verts.length; i += 2)
         {
-            point3[i] = data[i];
+            float[][] point2d = new float[3][1];
+            point2d[0][0] = verts[i];
+            point2d[1][0] = verts[i + 1];
+            point2d[2][0] = 0.0f;
+
+            float[][] modelProj = MatrixMath.Mult(model.getArr2d(), projection.getArr2d());
+            point2d = MatrixMath.Mult(modelProj, point2d);
+            float[] point2 = {point2d[0][0] * -1, point2d[1][0]};
+
+            float[] color = {1.0f, 0.0f, 0.0f, 1.0f};
+            float[] point6 = ArrayOps.concat(point2, color);
+            for (int o = 0; o < point6.length; ++o)
+            {
+                points.add(point6[o]);
+                System.out.println(points.size());
+            }
         }
-        point3[2] = 0.0f;
-
-        float[][] point2d = new float[3][1];
-        point2d[0][0] = point3[0];
-        point2d[1][0] = point3[1];
-        point2d[2][0] = point3[2];
-
-        float[][] modelProj = MatrixMath.Mult(model.getArr2d(), projection.getArr2d());
-        point2d = MatrixMath.Mult(modelProj, point2d);
-        float[] point2 = {point2d[0][0], point2d[0][1]};
-
-        float[] point6 = ArrayOps.concat(point2, col.getArr());
-        points = ArrayOps.concat(points, point6);
-        VBO psVbo = new VBO(points);
+        if (points.size() > verts.length + verts.length * 4)
+        {
+            psVbo.Delete();
+            psVao.Delete();
+        }
+        System.out.println(points.size());
+        //assert points.size() < 6200 : "Points bigger than 6000";
+        psVbo = new VBO(points);
         int[] vaoInst = {2, 4};
         psVao = new VAO(vaoInst, 6);
+        psVbo.UnBind();
+        psVao.UnBind();
     }
 
     private VAO createCenterPoint()
@@ -88,7 +105,7 @@ public class Object
         float[] arr = {0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f};
         int[] vaoInst = {2, 4};
         VBO vbo = new VBO(arr);
-        VAO vao = new VAO(vaoInst, 4);
+        VAO vao = new VAO(vaoInst, 6);
         vbo.UnBind();
         vao.UnBind();
         return vao;
@@ -138,20 +155,26 @@ public class Object
     public void Draw(ShaderProgram shader)
     {
         makeModelMatrix();
-        addPoint();
-        shader.SetMat3Uniform("model", model);
         shader.EnableProgram();
-        oVao.Bind();
+        shader.SetIntUniform("skip", 0);
+        shader.SetMat3Uniform("model", model);
 
-        glDrawArrays(GL_TRIANGLES, 0, data.length / 2);
+        oVao.Bind();
+        glDrawArrays(GL_TRIANGLES, 0, data.length);
         oVao.UnBind();
 
-        pVao.Bind();
-        glDrawArrays(GL_POINTS, 0, 1);
-        pVao.UnBind();
-
-        psVao.Bind();
-        glDrawArrays(GL_POINTS, 0, points.length / 3);
-        psVao.UnBind();
+        if (debug)
+        {
+            addPoint();
+            pVao.Bind();
+            glDrawArrays(GL_POINTS, 0, 1);
+            pVao.UnBind();
+            
+            psVao.Bind();
+            shader.SetIntUniform("skip", 1);
+            glDrawArrays(GL_POINTS, 0, points.size());
+            System.out.println("Draw Complete!");
+            psVao.UnBind();
+        }
     }
 }

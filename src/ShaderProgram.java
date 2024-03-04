@@ -109,6 +109,7 @@ public class ShaderProgram
     public void SetIntUniform(String name, int num)
     {
         int loc = glGetUniformLocation(ID, name);
+        int[] nums = {num};
         if (loc < 0)
         {
             System.out.println("Uniform not found!");
@@ -120,7 +121,7 @@ public class ShaderProgram
             {
                 IntBuffer numIn = stack.mallocInt(1);
                 numIn.put(num);
-                glUniform1iv(loc, numIn);
+                glUniform1i(loc, num);
             }
         }
     }
@@ -235,6 +236,28 @@ public class ShaderProgram
                 FloatBuffer numIn = stack.mallocFloat(9);
                 numIn.put(mat.getArr());
                 glUniformMatrix3fv(loc, false, mat.getArr());
+            }
+        }
+    }
+
+    public void SetBoolUniform(String name, boolean bool)
+    {
+        int loc = glGetUniformLocation(ID, name);
+
+        int num = (bool) ? 1 : 0;
+
+        if (loc < 0)
+        {
+            System.out.println("Uniform not found!");
+            return;
+        }
+        else
+        {
+            try (MemoryStack stack = stackPush())
+            {
+                IntBuffer numIn = stack.mallocInt(1);
+                numIn.put(num);
+                glUniform1iv(loc, numIn);
             }
         }
     }
