@@ -20,4 +20,14 @@ public class vec3 extends vec2
         float[] arr = {this.x, this.y, this.z};
         return arr;
     }
+
+    public void print()
+    {
+        System.out.print("{");
+        System.out.print(x + ", ");
+        System.out.print(y + ", ");
+        System.out.print(z);
+        System.out.print("}");
+
+    }
 }

@@ -48,12 +48,16 @@ public class GLWindow
         GL.createCapabilities();
         CompShaders();
 
-        float aspectRatio = Width / Height;
+        float aspectRatio = (float)Width / Height;
 
-        float top = 1.0f;
-        float bottom = -1.0f;
+        float top = 1.0f / (aspectRatio);
+        float bottom = -1.0f / (aspectRatio);
         float right = -1.0f;
         float left = 1.0f;
+        System.out.println(aspectRatio);
+        System.out.println(right);
+        System.out.println(left);
+        System.out.println(right - left);
 
         projection = createOrthoProj(top, bottom, right, left);
         setConstUniforms(shader);
@@ -78,6 +82,8 @@ public class GLWindow
         vec3 r2 = new vec3(0.0f, 2.0f / (top - bottom), -1.0f * (top + bottom) / (top - bottom));
         vec3 r3 = new vec3(0.0f, 0.0f, 1.0f);
         mat3 viewMatrix = new mat3(r1, r2, r3);
+        System.out.println(right - left);
+        viewMatrix.print();
         return viewMatrix;
     }
 

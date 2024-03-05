@@ -28,4 +28,13 @@ public class mat3
         float[][] arr2d = {r1.getArr(), r2.getArr(), r3.getArr()};
         return arr2d;
     }
+
+    public void print()
+    {
+        r1.print();
+        System.out.print('\n');
+        r2.print();
+        System.out.print('\n');
+        r3.print();
+    }
 }
