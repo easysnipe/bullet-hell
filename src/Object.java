@@ -86,6 +86,7 @@ public class Object
                 System.out.println(points.size());
             }
         }
+
         if (points.size() > verts.length + verts.length * 4)
         {
             psVbo.Delete();
@@ -130,8 +131,17 @@ public class Object
         vec3 r3 = new vec3(0.0f, 0.0f, 1.0f);
         mat3 translationMat = new mat3(r1, r2, r3);
 
+        vec3 p = new vec3(0.5f, 1.0f, 0.0f);
+        float[][] pa = new float[3][1];
+        pa[0][0] = p.x;
+        pa[1][0] = p.y;
+        pa[2][0] = p.z;
+
+        pa = (MatrixMath.Mult(translationMat.getArr2d(), pa));
+        //System.out.println(pa[1][0]);
+
         // Rotatiton Matrix
-        r1 = new vec3((float)Math.cos(rotation), -1 * (float)Math.sin(rotation), 0.0f);
+        r1 = new vec3((float)Math.cos(rotation), -1.0f * (float)Math.sin(rotation), 0.0f);
         r2 = new vec3((float)Math.sin(rotation), (float)Math.cos(rotation),  0.0f);
         r3 = new vec3(0.0f, 0.0f, 1.0f);
         mat3 rotationMat = new mat3(r1, r2, r3);
@@ -142,8 +152,8 @@ public class Object
         r3 = new vec3(0.0f, 0.0f, 1.0f);
         mat3 scaleMat = new mat3(r1, r2, r3);
         
-        model = new mat3(MatrixMath.Mult(scaleMat.getArr2d(), rotationMat.getArr2d()));
-        model = new mat3(MatrixMath.Mult(model.getArr2d(), translationMat.getArr2d()));
+        model = new mat3(MatrixMath.Mult(translationMat.getArr2d(), rotationMat.getArr2d()));
+        model = new mat3(MatrixMath.Mult(model.getArr2d(), scaleMat.getArr2d()));
         //model = translationMat;
     }
     

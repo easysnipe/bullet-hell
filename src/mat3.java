@@ -31,6 +31,7 @@ public class mat3
 
     public void print()
     {
+        System.out.print('\n');
         r1.print();
         System.out.print('\n');
         r2.print();

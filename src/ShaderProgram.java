@@ -109,7 +109,6 @@ public class ShaderProgram
     public void SetIntUniform(String name, int num)
     {
         int loc = glGetUniformLocation(ID, name);
-        int[] nums = {num};
         if (loc < 0)
         {
             System.out.println("Uniform not found!");

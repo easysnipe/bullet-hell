@@ -1,11 +1,8 @@
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.*;
-import org.lwjgl.system.*;
-import java.nio.*;
 import java.io.File;
 
 import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.glfw.Callbacks.*;
 import static org.lwjgl.opengl.GL43.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
@@ -50,14 +47,10 @@ public class GLWindow
 
         float aspectRatio = (float)Width / Height;
 
-        float top = 1.0f / (aspectRatio);
-        float bottom = -1.0f / (aspectRatio);
-        float right = -1.0f;
-        float left = 1.0f;
-        System.out.println(aspectRatio);
-        System.out.println(right);
-        System.out.println(left);
-        System.out.println(right - left);
+        float top = 1.0f;
+        float bottom = -1.0f;
+        float right = -1.0f * aspectRatio;
+        float left = 1.0f * aspectRatio;
 
         projection = createOrthoProj(top, bottom, right, left);
         setConstUniforms(shader);
@@ -66,7 +59,6 @@ public class GLWindow
     private void setConstUniforms(ShaderProgram shade)
     {
         shade.EnableProgram();
-        System.out.println(projection.getArr2d()[0][0]);
         shade.SetMat3Uniform("projection", projection);
     }
 
@@ -78,13 +70,16 @@ public class GLWindow
 
     public mat3 createOrthoProj(float top, float bottom, float right, float left)
     {
-        vec3 r1 = new vec3(2.0f / (right - left), 0.0f, -1.0f * (left + right) / (right - left));
-        vec3 r2 = new vec3(0.0f, 2.0f / (top - bottom), -1.0f * (top + bottom) / (top - bottom));
+        vec3 r1 = new vec3(2.0f / (right - left), 0.0f, 0.0f);//-1.0f * (left + right) / (right - left));
+        vec3 r2 = new vec3(0.0f, 2.0f / (top - bottom), 0.0f);//-1.0f * (top + bottom) / (top - bottom));
         vec3 r3 = new vec3(0.0f, 0.0f, 1.0f);
         mat3 viewMatrix = new mat3(r1, r2, r3);
-        System.out.println(right - left);
-        viewMatrix.print();
         return viewMatrix;
+    }
+
+    public long getGLFW()
+    {
+        return window;
     }
 
     public boolean windowShouldClose()

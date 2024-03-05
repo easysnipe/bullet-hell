@@ -13,8 +13,7 @@ void main()
     color = aColor;
     if (skip == 0)
     {
-        vec3 Pos = model * projection * vec3(aPos, 0.0);
-        Pos.z = 0.0;
+        vec3 Pos = projection * model * vec3(aPos, 0.0);  // Remember PVM
         gl_Position = vec4(Pos, 1.0);
     }
     else
