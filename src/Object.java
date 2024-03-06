@@ -1,3 +1,6 @@
+import static org.lwjgl.opengl.GL43.GL_POINTS;
+import static org.lwjgl.opengl.GL43.GL_TRIANGLES;
+import static org.lwjgl.opengl.GL43.glDrawArrays;
 import static org.lwjgl.opengl.GL43.*;
 import java.lang.Math;
 import java.util.ArrayList;
@@ -66,6 +69,7 @@ public class Object
 
     private void addPoint()
     {
+        System.out.print('\n');
         //points.add(1.0f);
         for (int i = 0; i < verts.length; i += 2)
         {
@@ -80,19 +84,23 @@ public class Object
 
             float[] color = {1.0f, 0.0f, 0.0f, 1.0f};
             float[] point6 = ArrayOps.concat(point2, color);
+            System.out.print(i / 2 + ": ");
             for (int o = 0; o < point6.length; ++o)
             {
                 points.add(point6[o]);
-                System.out.println(points.size());
+                System.out.print(point6[o] + " ");
             }
+            System.out.print('\n');
         }
+
+        System.out.print('\n');
 
         if (points.size() > verts.length + verts.length * 4)
         {
             psVbo.Delete();
             psVao.Delete();
         }
-        System.out.println(points.size());
+        //System.out.println(points.size());
         //assert points.size() < 6200 : "Points bigger than 6000";
         psVbo = new VBO(points);
         int[] vaoInst = {2, 4};
@@ -131,7 +139,7 @@ public class Object
         vec3 r3 = new vec3(0.0f, 0.0f, 1.0f);
         mat3 translationMat = new mat3(r1, r2, r3);
 
-        vec3 p = new vec3(0.5f, 1.0f, 0.0f);
+        vec3 p = new vec3(0.0f, (2 * (float)Math.sqrt(3)/3), 1.0f);
         float[][] pa = new float[3][1];
         pa[0][0] = p.x;
         pa[1][0] = p.y;
@@ -147,14 +155,15 @@ public class Object
         mat3 rotationMat = new mat3(r1, r2, r3);
 
         // Scale matrix
-        r1 = new vec3(scale.x, 0.0f, 0.0f);
-        r2 = new vec3(0.0f, scale.y, 0.0f);
+        r1 = new vec3(scale.x / 100.0f, 0.0f, 0.0f);
+        r2 = new vec3(0.0f, scale.y / 100.0f, 0.0f);
         r3 = new vec3(0.0f, 0.0f, 1.0f);
         mat3 scaleMat = new mat3(r1, r2, r3);
         
-        model = new mat3(MatrixMath.Mult(translationMat.getArr2d(), rotationMat.getArr2d()));
+        //model = new mat3(MatrixMath.Mult(translationMat.getArr2d(), rotationMat.getArr2d()));
+        model = rotationMat;
         model = new mat3(MatrixMath.Mult(model.getArr2d(), scaleMat.getArr2d()));
-        //model = translationMat;
+       // model = translationMat;
     }
     
     public void rotate(float radians)
@@ -168,6 +177,10 @@ public class Object
         shader.EnableProgram();
         shader.SetIntUniform("skip", 0);
         shader.SetMat3Uniform("model", model);
+        shader.SetFloatUniform("x", ((pos.x / 100.0f) - 0.5f) * 2);
+        shader.SetFloatUniform("y", ((pos.y / 100.0f) - 0.5f) * 2);
+
+        
 
         oVao.Bind();
         glDrawArrays(GL_TRIANGLES, 0, data.length);

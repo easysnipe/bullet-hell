@@ -5,32 +5,28 @@ public class Example
 {
     public static void main(String[] args)
     {
-        GLWindow window = new GLWindow(1920, 1080, "Example Window");
-
-        float[] triangleVerts = {
-        0.0f, (2 * (float)Math.sqrt(3)/3),
-        1.0f, (-1.0f * (float)Math.sqrt(3) / 3),
-        -1.0f, (-1.0f * (float)Math.sqrt(3) / 3)
-        };
-        
-        Object triangle = new Object(triangleVerts, new vec4(1.0f, 1.0f, 1.0f, 1.0f));
-        triangle.debug = false;
-
-        Object[] objects = {triangle};
-
-        while (!window.windowShouldClose())
-        {
-            window.drawFrame(objects);
-            triangle.rotation = (float)window.getTime();
-            triangle.pos = updPos(window.getGLFW(), triangle.pos);
-        }
+        Game game = new Game();
     }
 
-    public static vec2 updPos(long glfwWindow, vec2 pos)
+    public static vec2 updPos(long glfwWindow, vec2 pos, float deltaTime)
     {
+        float speed = 2.0f * deltaTime;
+
         if (glfwGetKey(glfwWindow, GLFW_KEY_W) == GLFW_PRESS)
         {
-            pos.y += 0.1f;
+            pos.y += speed;
+        }
+        if (glfwGetKey(glfwWindow, GLFW_KEY_S) == GLFW_PRESS)
+        {
+            pos.y -= speed;
+        }
+        if (glfwGetKey(glfwWindow, GLFW_KEY_A) == GLFW_PRESS)
+        {
+            pos.x -= speed * (1080/1920.0f);
+        }
+        if (glfwGetKey(glfwWindow, GLFW_KEY_D) == GLFW_PRESS)
+        {
+            pos.x += speed * (1080/1920.0f);
         }
 
         return pos;

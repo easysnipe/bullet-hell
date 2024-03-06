@@ -139,7 +139,7 @@ public class ShaderProgram
             {
                 FloatBuffer numIn = stack.mallocFloat(1);
                 numIn.put(num);
-                glUniform1fv(loc, numIn);
+                glUniform1f(loc, num);
             }
         }
     }

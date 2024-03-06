@@ -1,6 +1,7 @@
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.*;
 import java.io.File;
+import java.util.ArrayList;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL43.*;
@@ -92,15 +93,15 @@ public class GLWindow
         return glfwGetTime();
     }
 
-    public void drawFrame(Object[] objects)
+    public void drawFrame(ArrayList<Object> objects)
     {
         glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        for (int i = 0; i < objects.length; ++i)
+        for (int i = 0; i < objects.size(); ++i)
         {
-            objects[i].projection = projection;
-            objects[i].Draw(shader);
+            objects.get(i).projection = projection;
+            objects.get(i).Draw(shader);
         }
 
         glfwSwapBuffers(window);
