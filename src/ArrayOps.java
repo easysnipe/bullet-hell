@@ -29,7 +29,7 @@ public class ArrayOps
 
         for (int i = 0; i < arr2.size(); ++i)
         {
-            arr.add(arr2.get(arr1.size() + i));
+            arr.add(arr2.get(i));
         }
         return arr;
     }
