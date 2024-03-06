@@ -58,14 +58,17 @@ public class ShaderProgram
                 if (type == GL_VERTEX_SHADER)
                 {
                     System.out.println("VERTEX SHADER ERROR::" + '\n' + glGetShaderInfoLog(shader, 2048));
+                    System.exit(0);
                 }
                 else if (type == GL_FRAGMENT_SHADER)
                 {
                     System.out.println("FRAGMENT SHADER ERROR::" + '\n' + glGetShaderInfoLog(shader, 2048));
+                    System.exit(0);
                 }
                 else 
                 {
                     System.out.println("UNKOWN SHADER ERROR::" + '\n' + glGetShaderInfoLog(shader, 2048));
+                    System.exit(0);
                 }
                 reader.close();
                 return -1;
